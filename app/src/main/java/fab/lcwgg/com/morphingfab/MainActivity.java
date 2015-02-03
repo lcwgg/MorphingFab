@@ -58,6 +58,7 @@ public class MainActivity extends Activity {
 
         private boolean hasMorphedButton1 = false;
         private boolean hasMorphedButton2 = false;
+        private boolean hasMorphedButton3 = false;
 
         public PlaceholderFragment() {
         }
@@ -68,9 +69,11 @@ public class MainActivity extends Activity {
             final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             final ImageButton fab1 = (ImageButton) rootView.findViewById(R.id.fab_button1);
             final ImageButton fab2 = (ImageButton) rootView.findViewById(R.id.fab_button2);
+            final ImageButton fab3 = (ImageButton) rootView.findViewById(R.id.fab_button3);
 
             fab1.setOnClickListener(this);
             fab2.setOnClickListener(this);
+            fab3.setOnClickListener(this);
 
             return rootView;
         }
@@ -96,6 +99,16 @@ public class MainActivity extends Activity {
                     hasMorphedButton2 = false;
                     final int fabSize = getResources().getDimensionPixelSize(R.dimen.round_button_diameter);
                     startWidthAnimation(v, fabSize, 1000);
+                }
+            } else if (v.getId() == R.id.fab_button3) {
+                if (!hasMorphedButton3) {
+                    hasMorphedButton3 = true;
+                    // arbitrary values for Nexus 5
+                    startSizeAnimation(v, 400, 600, 1000);
+                } else {
+                    hasMorphedButton3 = false;
+                    final int fabSize = getResources().getDimensionPixelSize(R.dimen.round_button_diameter);
+                    startSizeAnimation(v, fabSize, fabSize, 1000);
                 }
             }
         }
@@ -134,14 +147,81 @@ public class MainActivity extends Activity {
                     view.requestLayout();
                 }
             });
-            widthAnimation.setDuration(duration);
 
             if (fromWidth > toWidth) {
-                cornerAnimation = getCornerAnimation(view.getBackground(), 0, 60, duration);
+                // arbitrary values for Nexus 5
+                cornerAnimation = getCornerAnimation(view.getBackground(), 0, 100, duration);
             } else {
-                cornerAnimation = getCornerAnimation(view.getBackground(), 60, 0, duration);
+                // arbitrary values for Nexus 5
+                cornerAnimation = getCornerAnimation(view.getBackground(), 100, 0, duration);
             }
+            set.setDuration(duration);
             set.play(widthAnimation).with(cornerAnimation);
+            set.start();
+        }
+
+        private void startSizeAnimation(final View view, final int toWidth, final int toHeight, final int duration){
+            final AnimatorSet set = new AnimatorSet();
+            final ObjectAnimator cornerAnimation;
+            final int fromWidth = view.getWidth();
+            final int fromHeight = view.getHeight();
+            final ValueAnimator widthAnimation = ValueAnimator.ofInt(fromWidth, toWidth);
+            final ValueAnimator heightAnimation = ValueAnimator.ofInt(fromHeight, toHeight);
+
+            widthAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    final Integer widthValue = (Integer) animation.getAnimatedValue();
+                    final int leftOffset;
+                    final int rightOffset;
+
+                    if (fromWidth > toWidth) {
+                        leftOffset = (fromWidth - widthValue) / 2;
+                        rightOffset = fromWidth - leftOffset;
+                    } else {
+                        leftOffset = (toWidth - widthValue) / 2;
+                        rightOffset = toWidth - leftOffset;
+                    }
+
+
+                    view.getBackground()
+                            .setBounds(leftOffset, 0, rightOffset, view.getHeight());
+                    view.getLayoutParams().width = widthValue;
+                    view.requestLayout();
+                }
+            });
+
+            heightAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    Integer value = (Integer) animation.getAnimatedValue();
+                    int topOffset;
+                    int bottomOffset;
+
+                    if (fromHeight > toHeight) {
+                        topOffset = (fromHeight - value) / 2;
+                        bottomOffset = fromHeight - topOffset;
+                    } else {
+                        topOffset = (toHeight - value) / 2;
+                        bottomOffset = toHeight - topOffset;
+                    }
+
+                    view.getBackground()
+                            .setBounds(view.getWidth(), topOffset, view.getWidth(), bottomOffset);
+                    view.getLayoutParams().height = value;
+                    view.requestLayout();
+                }
+            });
+
+            if (fromWidth > toWidth) {
+                // arbitrary values for Nexus 5
+                cornerAnimation = getCornerAnimation(view.getBackground(), 0, 100, duration);
+            } else {
+                // arbitrary values for Nexus 5
+                cornerAnimation = getCornerAnimation(view.getBackground(), 100, 0, duration);
+            }
+            set.setDuration(duration);
+            set.playTogether(widthAnimation, heightAnimation, cornerAnimation);
             set.start();
         }
     }

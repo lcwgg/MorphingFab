@@ -31,4 +31,16 @@
         android:src="@android:drawable/ic_input_add"
         android:tint="@android:color/white" />
 
+    <ImageButton
+        android:id="@+id/fab_button3"
+        android:layout_width="@dimen/round_button_diameter"
+        android:layout_height="@dimen/round_button_diameter"
+        android:layout_below="@id/fab_button2"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:background="@drawable/rectangle"
+        android:elevation="@dimen/elevation_low"
+        android:src="@android:drawable/ic_input_add"
+        android:tint="@android:color/white" />
+
 </RelativeLayout>
