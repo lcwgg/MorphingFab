@@ -80,19 +80,22 @@ public class MainActivity extends Activity {
             if (v.getId() == R.id.fab_button1) {
                 if (!hasMorphedButton1) {
                     hasMorphedButton1 = true;
-                    getCornerAnimation(v.getBackground(), 60, 0, 800).start();
+                    // arbitrary values for Nexus 5
+                    getCornerAnimation(v.getBackground(), 100, 0, 800).start();
                 } else {
                     hasMorphedButton1 = false;
-                    getCornerAnimation(v.getBackground(), 0, 60, 800).start();
+                    // arbitrary values for Nexus 5
+                    getCornerAnimation(v.getBackground(), 0, 100, 800).start();
                 }
             } else if (v.getId() == R.id.fab_button2) {
                 if (!hasMorphedButton2) {
                     hasMorphedButton2 = true;
-                    startWidthAnimation(v, 200, 1000);
+                    // arbitrary values for Nexus 5
+                    startWidthAnimation(v, 400, 1000);
                 } else {
                     hasMorphedButton2 = false;
-                    // 112 = fab size * 2
-                    startWidthAnimation(v, 112, 1000);
+                    final int fabSize = getResources().getDimensionPixelSize(R.dimen.round_button_diameter);
+                    startWidthAnimation(v, fabSize, 1000);
                 }
             }
         }
